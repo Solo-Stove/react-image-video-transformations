@@ -18,3 +18,15 @@ export function getQuickstartImage() {
 
   return myImage;
 }
+
+export function getBaseImage() {
+  // Create a Cloudinary instance and set your cloud name.
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: 'solostove'
+    }
+  });
+  const myImage = cld.image('transform/02a5d7f3-352f-444d-a24a-1b70266f2bc9/SoloStove-Camping-x-Ryan-Kost_Oct-21-23_008');
+
+  return myImage;
+}

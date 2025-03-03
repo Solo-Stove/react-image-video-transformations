@@ -1,7 +1,13 @@
-import React from "react";
+import React, {useState, useRef, useEffect} from 'react';
 import '../App.css';
 import {AdvancedImage, lazyload, accessibility, responsive, placeholder} from '@cloudinary/react';
-import {getQuickstartImage} from '../quickstart';
+// import {Flex, Skeleton, Box} from '@salesforce/retail-react-app/app/components/shared/ui'
+import {transformationStringFromObject} from '@cloudinary/url-gen'
+import {fill, auto} from '@cloudinary/url-gen/actions/resize'
+import {autoGravity} from '@cloudinary/url-gen/qualifiers/gravity'
+import {dpr} from '@cloudinary/url-gen/actions/delivery'
+import {unsharpMask} from '@cloudinary/url-gen/actions/adjust'
+import {getQuickstartImage, getBaseImage} from '../quickstart';
 import {getFullExampleImage} from '../fullExample';
 import {getQuickExampleImage} from '../quickExample';
 import {getAssetInstanceImage} from '../assetInstance';
@@ -26,22 +32,88 @@ import {getPlaceholderImage} from '../placeholder';
 import {getLazyloadPlaceholderImage} from '../lazyloadPlaceholder';
 
 function Images() {
+  const options = {
+    // removeOnError: false,
+    // removeContainerOnError: false,
+    // aspectRatio: 1.5,
+    width: 2304,
+    // height: 200,
+    alt: 'Sample Image',
+    // style: null,
+  };
 
-  // This app has been structured to ensure that each example is self-contained, to show exactly what needs to be imported in each case. 
-  
-  // Therefore, whereas the docs may show the JavaScript in this location, and the AdvancedImage component directly referencing the image, for example:
+  const transformObj = transformationStringFromObject([
+    {gravity: "auto", quality: "auto", height: options.height, width: options.width, crop: "auto"},
+    {dpr: "auto", effect: {unsharp: 100}}
+  ]);
 
-  // <AdvancedImage cldImg={myImage} />
+  const {lazyload: isLazyLoad = true} = options
 
-  // in this app we call a function to return myImage, for example:
+  const plugins = []
+  const transformation = fill().gravity(autoGravity())
 
-  // <AdvancedImage cldImg={getQuickstartImage()} />
+  if (isLazyLoad) {
+      plugins.push(lazyload())
+  }
+
+  if (options.aspectRatio) {
+      transformation.aspectRatio(options.aspectRatio)
+  }
+
+  if (options.width || options.height) {
+      if (options.width) {
+          transformation.width(options.width)
+      }
+      if (options.height) {
+          transformation.height(options.height)
+      }
+  } else {
+      plugins.push(responsive())
+  }
 
   return (
     <div className="App-body">
       <h1 className="font-weight-light">Image Transformations</h1>
 
-      Crop an image to a square, as shown in the <br/><a className="App-link" href="https://cloudinary.com/documentation/react_quick_start" target="_blank" rel="noopener noreferrer">Quick start guide</a>
+      <div style={{display: 'flex', justifyContent: 'center', columnGap: '20px', padding: '20px'}}>
+        <div>
+          <AdvancedImage
+              cldImg={getBaseImage().resize(transformation).format('auto').quality('auto').delivery(dpr('auto')).adjust(unsharpMask().strength(100))}
+              plugins={plugins}
+              alt={options?.alt || ''}
+              width={options?.width || null}
+              height={options?.height || null}
+          />
+          <h3>base image using original approach</h3>
+        </div>
+        <div>
+          <AdvancedImage cldImg={getBaseImage().addTransformation('c_auto,g_auto,f_auto,q_auto,dpr_auto,e_unsharp_mask:100,w_2304')} plugins={plugins} />
+          <h3>base image using addTransformation() string</h3>
+        </div>
+        <div>
+          <AdvancedImage cldImg={
+            getBaseImage().resize(
+              auto()
+              .width(options.width)
+              .gravity(autoGravity())
+            ).format('auto')
+              .quality('auto')
+              .delivery(dpr('auto'))
+              .adjust(unsharpMask().strength(100)
+            )}
+            plugins={plugins}
+          />
+          <h3>base image using transform functions</h3>
+        </div>
+      </div>
+
+
+      {/* <h3>base image using addTransformation() object</h3>
+      <AdvancedImage cldImg={getBaseImage().addTransformation(transformObj)} plugins={plugins} />
+      <br /><br />
+ */}
+
+      {/* Crop an image to a square, as shown in the <br/><a className="App-link" href="https://cloudinary.com/documentation/react_quick_start" target="_blank" rel="noopener noreferrer">Quick start guide</a>
       <div className="space"></div>
       <AdvancedImage cldImg={getQuickstartImage()} />
 
@@ -195,7 +267,7 @@ function Images() {
       <div className="space"></div>
       <AdvancedImage cldImg={getOptimizationsImage()} /> 
 
-      <br/>
+      <br/> */}
 
     </div>
   );
