@@ -1,4 +1,3 @@
-
 .App-body {
   text-align: center;
   font-size: calc(8px + 2vmin);
@@ -6,20 +5,31 @@
 }
 
 .App-link {
-  color: #FF5050;
+  color: #ff5050;
 }
 
 a:hover {
-  color: #FF5050;
+  color: #ff5050;
   text-decoration: underline;
 }
 
 img {
-	max-width: 50%;
+  max-width: 50%;
+}
+
+img.cld-responsive {
+  max-width: 100%;
+  height: auto;
+}
+
+img.responsive {
+  max-inline-size: 100%;
+  block-size: auto;
+  max-width: unset;
 }
 
 video {
-	max-width: 50%;
+  max-width: 50%;
 }
 
 .space {

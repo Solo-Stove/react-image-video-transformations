@@ -80,6 +80,7 @@ function Images() {
           <AdvancedImage
               cldImg={getBaseImage().resize(transformation).format('auto').quality('auto').delivery(dpr('auto')).adjust(unsharpMask().strength(100))}
               plugins={plugins}
+              className={['cld-responsive']}
               alt={options?.alt || ''}
               width={options?.width || null}
               height={options?.height || null}
@@ -87,7 +88,7 @@ function Images() {
           <h3>base image using original approach</h3>
         </div>
         <div>
-          <AdvancedImage cldImg={getBaseImage().addTransformation('c_auto,g_auto,f_auto,q_auto,dpr_auto,e_unsharp_mask:100,w_2304')} plugins={plugins} />
+          <AdvancedImage cldImg={getBaseImage().addTransformation('c_auto,g_auto,f_auto,q_auto,dpr_auto,e_unsharp_mask:100,w_2304')} plugins={plugins} className={['cld-responsive']} />
           <h3>base image using addTransformation() string</h3>
         </div>
         <div>
@@ -102,8 +103,26 @@ function Images() {
               .adjust(unsharpMask().strength(100)
             )}
             plugins={plugins}
+            className={['cld-responsive']}
           />
           <h3>base image using transform functions</h3>
+        </div>
+      </div>
+      <div style={{display: 'flex', justifyContent: 'center', columnGap: '20px', width: '100%', padding: '20px'}}>
+        <div>
+          <AdvancedImage cldImg={
+            getBaseImage().resize(
+              auto()
+              .gravity(autoGravity())
+            ).format('auto')
+              .quality('auto')
+              .delivery(dpr('auto'))
+              .adjust(unsharpMask().strength(100)
+            )}
+            plugins={[lazyload(), responsive()]}
+            className={['responsive']}
+          />
+          <h3>base image with responsive()</h3>
         </div>
       </div>
 
